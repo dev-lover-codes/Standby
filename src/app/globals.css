@@ -1,26 +1,195 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #F4ECDC;
+  --ink: #1B1A17;
+  --cue-red: #B42318;
+  --safe-green: #1F6B3A;
+  --tape-yellow: #E0A800;
+  --line: #CFC3AA;
+  --card-bg: #FCF8F0;
+  --muted: #6B655B;
+  --focus-ring: #B42318;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+[data-theme="dark"],
+.dark {
+  --bg: #12110F;
+  --ink: #F1E9D8;
+  --cue-red: #FF8A7A;
+  --safe-green: #7DD3A0;
+  --tape-yellow: #F2C94C;
+  --line: #38352F;
+  --card-bg: #1C1A17;
+  --muted: #A39B8B;
+  --focus-ring: #FF8A7A;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  :root:not([data-theme="light"]) {
+    --bg: #12110F;
+    --ink: #F1E9D8;
+    --cue-red: #FF8A7A;
+    --safe-green: #7DD3A0;
+    --tape-yellow: #F2C94C;
+    --line: #38352F;
+    --card-bg: #1C1A17;
+    --muted: #A39B8B;
+    --focus-ring: #FF8A7A;
   }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-public-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.5;
+  min-height: 100vh;
+  transition: background-color 150ms ease, color 150ms ease;
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Accessible focus styling */
+:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/* Skip link */
+.skip-to-content {
+  position: absolute;
+  top: -9999px;
+  left: 1rem;
+  z-index: 1000;
+  padding: 0.75rem 1.25rem;
+  background-color: var(--tape-yellow);
+  color: #1B1A17;
+  font-weight: 700;
+  text-decoration: underline;
+  border: 2px solid #1B1A17;
+}
+
+.skip-to-content:focus {
+  top: 1rem;
+}
+
+/* Signature Element: Gaffer tape strip */
+.gaffer-tape {
+  background-color: var(--tape-yellow);
+  color: #1B1A17;
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.25rem 0.75rem;
+  display: inline-block;
+  box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.15);
+  border-left: 3px dashed rgba(27, 26, 23, 0.4);
+  border-right: 3px dashed rgba(27, 26, 23, 0.4);
+}
+
+/* Signature Element: Paper Cue Card */
+.cue-card {
+  background-color: var(--card-bg);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  position: relative;
+}
+
+/* Torn bottom edge using CSS mask or repeating linear gradient */
+.cue-card-torn {
+  position: relative;
+  padding-bottom: 1.5rem;
+}
+.cue-card-torn::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 8px;
+  background-image: radial-gradient(circle, transparent 4px, var(--card-bg) 4px);
+  background-size: 12px 8px;
+  background-repeat: repeat-x;
+  background-position: bottom;
+}
+
+/* Signature Element: Stamp label */
+.stamp-label {
+  display: inline-block;
+  border: 2px solid var(--cue-red);
+  color: var(--cue-red);
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-weight: 800;
+  text-transform: uppercase;
+  padding: 0.2rem 0.6rem;
+  border-radius: 2px;
+  transform: rotate(-3deg);
+  letter-spacing: 0.05em;
+  animation: stampThunk 180ms ease-out;
+}
+
+@keyframes stampThunk {
+  0% {
+    transform: scale(1.3) rotate(-8deg);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1) rotate(-3deg);
+    opacity: 1;
+  }
+}
+
+/* Signature Element: Critical Path HOLD Badge */
+.hold-badge {
+  background-color: var(--cue-red);
+  color: #FFFFFF;
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 0.75rem;
+  font-weight: 800;
+  padding: 0.15rem 0.5rem;
+  border-radius: 2px;
+  letter-spacing: 0.06em;
+}
+
+/* Signature Element: Standby Light */
+.standby-light {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  background-color: var(--safe-green);
+  box-shadow: 0 0 6px var(--safe-green);
+}
+
+/* Print Stylesheet for clean 1-pager Call Sheet */
+@media print {
+  body {
+    background: #FFFFFF !important;
+    color: #000000 !important;
+    font-size: 11pt;
+  }
+  header, nav, footer, .no-print, button, .theme-toggle, .skip-to-content {
+    display: none !important;
+  }
+  .cue-card {
+    border: 1px solid #000000 !important;
+    box-shadow: none !important;
+    background: #FFFFFF !important;
+    page-break-inside: avoid;
+  }
+  a {
+    text-decoration: none !important;
+    color: #000000 !important;
+  }
 }

@@ -1,37 +1,38 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Standby
 
-## Getting Started
+> **"Standby. Your event is rehearsed."**
 
-First, run the development server:
+Standby answers **PromptWars Challenge 5 (Celebration & Event Planner)**. It is a GenAI-powered planning assistant that helps users organize weddings, birthdays, and community events with **budgets**, **timelines**, **vendor checklists**, and **personalized ideas**.
 
+Unlike traditional planners, Standby **rehearses the event on paper** before a single dollar is spent.
+
+## Core Features
+1. **Slate (Brief)**: Generates a complete event plan (JSON) from a user brief using Gemini.
+2. **Pre-Mortem**: Identifies 5 failure scenarios with concrete Plan B contingencies.
+3. **Money (Budget Reality Simulator)**: Pure deterministic Monte Carlo simulation (triangular distribution) computing P50, P80, P95, and over-budget risk.
+4. **Call Sheet (Timeline)**: Backward topological scheduler computing critical path and slack days.
+5. **Vendor Checklist**: Categorized vendor tracking with status lifecycle and quotes.
+6. **Guest Panel**: AI perspectives from 4 diverse guest personas and an accessibility review.
+7. **Personalized Ideas**: Contextual themes, activities, and touches.
+8. **Plan B Switch**: Deterministic scenario switch (Rain, Vendor cancelled, Budget cut 20%, +30 guests).
+9. **Share + Export**: Read-only expiring share link, `.ics` calendar export, and print-ready stylesheet.
+
+## Quick Start
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# 1. Install dependencies
+npm install
+
+# 2. Run contrast check
+npm run check:contrast
+
+# 3. Run unit tests
+npm test
+
+# 4. Build for production
+npm run build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-# Standby
+## Verified vs ⚠️ UNVERIFIED
+- **Verified**: Next.js App Router, TypeScript strict, Tailwind CSS, Vitest unit test suite with seeded PRNG, WCAG AA contrast verification.
+- ⚠️ **UNVERIFIED**: Gemini API free-tier exact rate limits in production regions.
+- ⚠️ **UNVERIFIED**: Free UptimeRobot monitoring ping interval (typically 5 minutes on free tier).
