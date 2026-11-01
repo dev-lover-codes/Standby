@@ -82,11 +82,11 @@ Standby is an event & celebration planner answering PromptWars Challenge 5. It h
 - [x] Lazy loading for heavy elements, bundle optimization.
 - [x] Accessibility review: ARIA landmarks, focus rings, keyboard navigability, contrast.
 
-### Phase 7: Tests, CI & Keep-Alive
-- [ ] Component tests with Testing Library.
-- [ ] Playwright E2E test suite with `@axe-core/playwright`.
-- [ ] `/api/health` route with `ping()` check.
-- [ ] `.github/workflows/ci.yml` and `.github/workflows/keepalive.yml`.
+### Phase 7: Tests, CI & Keep-Alive (COMPLETED)
+- [x] Component tests with Testing Library (`tests/components/`).
+- [x] Playwright E2E configuration & Axe accessibility audit specs (`e2e/accessibility-and-flows.spec.ts`).
+- [x] `/api/health` route with `ping()` check and test suite.
+- [x] `.github/workflows/ci.yml` and `.github/workflows/keepalive.yml`.
 
 ### Phase 8 & 9: Documentation & Verification
 - [ ] Comprehensive `README.md` under 250 lines with Mermaid diagram and `⚠️ UNVERIFIED` notes.
