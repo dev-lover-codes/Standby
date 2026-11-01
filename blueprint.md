@@ -88,7 +88,7 @@ Standby is an event & celebration planner answering PromptWars Challenge 5. It h
 - [x] `/api/health` route with `ping()` check and test suite.
 - [x] `.github/workflows/ci.yml` and `.github/workflows/keepalive.yml`.
 
-### Phase 8 & 9: Documentation & Verification
+### Phase 8 & 9: Documentation & Verification (COMPLETED)
 - [x] Comprehensive `README.md` under 250 lines with Mermaid diagram and `⚠️ UNVERIFIED` notes.
 - [x] `docs/ARCHITECTURE.md`.
-- [ ] Final audit against Definition of Done checklist.
+- [x] Final audit against Definition of Done checklist.
