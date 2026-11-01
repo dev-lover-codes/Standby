@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/browser";
 import { getSupabaseEnv } from "@/lib/supabase/env";
 import { credentialsSchema, friendlyAuthError } from "@/lib/validation/auth";
+import { GoogleSignInButton } from "@/components/GoogleSignInButton";
 
 const INPUT = "w-full min-h-[44px] px-3 rounded-[10px] bg-white/5 border border-[var(--line)] text-sm text-white placeholder:text-[var(--muted)]";
 
@@ -23,8 +24,8 @@ function LoginForm() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ text: string; error: boolean } | null>(
-    params.get("error") === "confirm"
-      ? { text: "That confirmation link is invalid or expired. Sign in, or register again.", error: true }
+    params.get("error") === "auth"
+      ? { text: "Sign-in did not finish. The link may have expired or Google was cancelled. Try again.", error: true }
       : null
   );
 
@@ -107,6 +108,12 @@ function LoginForm() {
         )}
       </div>
 
+      <GoogleSignInButton next={next} disabled={loading || !configured}
+        onError={(text) => setMessage({ text, error: true })} />
+      <p className="my-4 flex items-center gap-3 text-xs text-[var(--muted)] before:h-px before:flex-1 before:bg-[var(--line)] after:h-px after:flex-1 after:bg-[var(--line)]">
+        or use email
+      </p>
+
       <form onSubmit={handleEmail} className="space-y-4" noValidate>
         <div>
           <label htmlFor="auth-email" className="block text-sm font-medium mb-1">Email</label>
@@ -120,7 +127,7 @@ function LoginForm() {
             autoComplete={mode === "signin" ? "current-password" : "new-password"}
             onChange={(e) => setPassword(e.target.value)} className={INPUT} aria-describedby="auth-status" />
         </div>
-        <button type="submit" disabled={loading || !configured} className="btn btn-solid w-full">
+        <button type="submit" disabled={loading || !configured} className="btn btn-ghost w-full">
           {loading ? "Checking…" : mode === "signin" ? "Sign in" : "Create account"}
         </button>
       </form>

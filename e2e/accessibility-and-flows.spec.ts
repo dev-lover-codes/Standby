@@ -45,6 +45,7 @@ test.describe("Standby pages", () => {
   test("login page is accessible", async ({ page }) => {
     await page.goto("/login");
     await expect(page.locator("h1")).toContainText("Sign in to Standby");
+    await expect(page.getByRole("button", { name: /continue with google/i })).toBeVisible();
     await expectNoAxeViolations(page);
   });
 

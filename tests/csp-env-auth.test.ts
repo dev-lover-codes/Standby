@@ -46,6 +46,7 @@ describe("auth validation", () => {
     ["Email not confirmed", /Confirm your email/],
     ["Anonymous sign-ins are disabled", /Guest mode is off/],
     ["User already registered", /already has an account/],
+    ["Unsupported provider: provider is not enabled", /Google sign-in is off/],
     ["Failed to fetch", /Could not reach/],
     ["Something odd", /Something odd/],
   ])("maps %s", (raw, expected) => {

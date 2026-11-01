@@ -1,0 +1,49 @@
+name: Standby CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-and-verify:
+    runs-on: ubuntu-latest
+    env:
+      AI_MODE: mock
+      NEXT_PUBLIC_SUPABASE_URL: https://mock-supabase.supabase.co
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: mock-anon-key
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify contrast ratios (WCAG AA >= 4.5:1)
+        run: npm run check:contrast
+
+      - name: Lint codebase
+        run: npm run lint
+
+      - name: Typecheck TypeScript
+        run: npm run typecheck
+
+      - name: Run unit & component tests with coverage
+        run: npm run test
+
+      - name: Build Next.js application
+        run: npm run build
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Playwright E2E & Axe accessibility audits
+        run: npm run test:e2e

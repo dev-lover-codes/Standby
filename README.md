@@ -66,7 +66,8 @@ flowchart TD
    Never use the service-role key.
 3. **Turn on guest mode.** Authentication → Sign In / Providers → enable **Anonymous sign-ins** (needed for "Try as guest").
 4. **Allow the email link back.** Authentication → URL Configuration: set Site URL to your site, and add `http://localhost:3000/auth/callback` and `https://YOUR-SITE/auth/callback` to Redirect URLs.
-5. Restart `npm run dev`. The login page shows a yellow notice while the keys are missing.
+5. **Google sign-in.** Authentication → Sign In / Providers → Google: paste the Client ID and Client Secret from Google Cloud Console (OAuth client, type Web). In Google Cloud, add `https://YOUR-REF.supabase.co/auth/v1/callback` as an Authorized redirect URI. The app then shows **Continue with Google**; the user returns through `/auth/callback`.
+6. Restart `npm run dev`. The login page shows a yellow notice while the keys are missing.
 
 ---
 
