@@ -89,6 +89,6 @@ Standby is an event & celebration planner answering PromptWars Challenge 5. It h
 - [x] `.github/workflows/ci.yml` and `.github/workflows/keepalive.yml`.
 
 ### Phase 8 & 9: Documentation & Verification
-- [ ] Comprehensive `README.md` under 250 lines with Mermaid diagram and `⚠️ UNVERIFIED` notes.
-- [ ] `docs/ARCHITECTURE.md`.
+- [x] Comprehensive `README.md` under 250 lines with Mermaid diagram and `⚠️ UNVERIFIED` notes.
+- [x] `docs/ARCHITECTURE.md`.
 - [ ] Final audit against Definition of Done checklist.
