@@ -18,12 +18,14 @@ export default defineConfig({
         statements: 85,
       },
       include: ["src/lib/**/*.ts"],
-      exclude: ["src/lib/supabase/database.types.ts"],
+      exclude: [
+        "src/lib/supabase/database.types.ts",
+      ],
     },
   },
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
+      "@": path.resolve(import.meta.dirname, "./src"),
     },
   },
 });
