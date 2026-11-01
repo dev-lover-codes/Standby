@@ -1,61 +1,69 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
-test.describe("Standby Accessibility & Core Flows", () => {
-  test("Landing page meets WCAG AA standards (zero axe violations)", async ({ page }) => {
+async function expectNoAxeViolations(page: Page) {
+  const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"]).analyze();
+  expect(results.violations).toEqual([]);
+}
+
+test.describe("Standby pages", () => {
+  test("landing shows the tagline and the four Challenge 5 features", async ({ page }) => {
     await page.goto("/");
-
-    // Verify key Challenge 5 keywords are visible in the UI
-    await expect(page.locator("h1")).toContainText("Standby");
-    await expect(page.getByText("Your event is rehearsed.")).toBeVisible();
-    await expect(page.getByText("budget", { exact: false })).toBeVisible();
-    await expect(page.getByText("timeline", { exact: false })).toBeVisible();
-    await expect(page.getByText("vendor checklist", { exact: false })).toBeVisible();
-    await expect(page.getByText("personalized ideas", { exact: false })).toBeVisible();
-
-    // Run Axe scan
-    const accessibilityScanResults = await new AxeBuilder({ page })
-      .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
-      .analyze();
-
-    expect(accessibilityScanResults.violations).toEqual([]);
+    await expect(page.locator("h1")).toContainText("Standby.");
+    await expect(page.locator("h1")).toContainText("Your event is rehearsed.");
+    const sub = page.locator(".hero p");
+    for (const word of ["Budget", "timeline", "vendor checklist", "personalized ideas"]) {
+      await expect(sub).toContainText(word);
+    }
+    await expect(page.locator(".frame")).not.toHaveClass(/intro/, { timeout: 6000 });
+    await expectNoAxeViolations(page);
   });
 
-  test("Skip to content link is accessible and targets main", async ({ page }) => {
+  test("landing does not scroll", async ({ page }) => {
     await page.goto("/");
-    const skipLink = page.locator(".skip-to-content");
-    await expect(skipLink).toBeAttached();
-    await expect(skipLink).toHaveAttribute("href", "#main-content");
+    const [scrollH, viewH] = await page.evaluate(() => [document.documentElement.scrollHeight, innerHeight]);
+    expect(scrollH).toBeLessThanOrEqual(viewH);
   });
 
-  test("Theme toggle switches theme cleanly", async ({ page }) => {
+  test("phone menu opens, closes with Escape, and updates its label", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
     await page.goto("/");
-    const themeBtn = page.getByRole("button", { name: /switch to dark theme|switch to light theme/i });
-    await expect(themeBtn).toBeVisible();
-    await themeBtn.click();
-    const html = page.locator("html");
-    await expect(html).toHaveAttribute("data-theme", /dark|light/);
+    const menu = page.getByRole("button", { name: "Menu" });
+    await menu.click();
+    await expect(page.getByRole("button", { name: "Close menu" })).toHaveAttribute("aria-expanded", "true");
+    await expect(page.locator("#menu-sheet")).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(page.getByRole("button", { name: "Menu" })).toHaveAttribute("aria-expanded", "false");
   });
 
-  test("Login page accessibility scan", async ({ page }) => {
+  test("skip link targets main content", async ({ page }) => {
     await page.goto("/login");
-    await expect(page.locator("h1")).toContainText("Production Login");
-
-    const accessibilityScanResults = await new AxeBuilder({ page })
-      .withTags(["wcag2a", "wcag2aa"])
-      .analyze();
-
-    expect(accessibilityScanResults.violations).toEqual([]);
+    await expect(page.locator(".skip-to-content")).toHaveAttribute("href", "#main-content");
+    await expect(page.locator("#main-content")).toBeAttached();
   });
 
-  test("New event slate form accessibility scan", async ({ page }) => {
+  test("login page is accessible", async ({ page }) => {
+    await page.goto("/login");
+    await expect(page.locator("h1")).toContainText("Sign in to Standby");
+    await expectNoAxeViolations(page);
+  });
+
+  test("protected pages send signed-out visitors to sign in", async ({ page }) => {
     await page.goto("/events/new");
-    await expect(page.locator("h1")).toContainText("Rehearse a New Event");
+    await expect(page).toHaveURL(/\/login\?next=%2Fevents%2Fnew/);
+  });
 
-    const accessibilityScanResults = await new AxeBuilder({ page })
-      .withTags(["wcag2a", "wcag2aa"])
-      .analyze();
+  test("expired share link explains what to do next", async ({ page }) => {
+    await page.goto("/share/not-a-real-token");
+    await expect(page.locator("h1")).toContainText("This share link does not work");
+    await expectNoAxeViolations(page);
+  });
 
-    expect(accessibilityScanResults.violations).toEqual([]);
+  test("security headers are set", async ({ request }) => {
+    const res = await request.get("/");
+    const csp = res.headers()["content-security-policy"] ?? "";
+    expect(csp).toContain("frame-ancestors 'none'");
+    expect(csp).not.toContain("unsafe-eval");
+    expect(res.headers()["x-content-type-options"]).toBe("nosniff");
   });
 });

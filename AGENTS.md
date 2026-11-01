@@ -32,25 +32,24 @@ What makes it different: it REHEARSES the event on paper. Features:
 - Make only the changes that were asked for. One conventional commit per phase. Do not push (the human pushes).
 - If something is uncertain (a tool, a limit, a policy), write `⚠️ UNVERIFIED` in the README instead of guessing.
 
-## 3. Design: "The Rehearsal Room" (NOT space, NOT galaxy, NOT purple gradients)
-Concept: the app looks like a theatre stage manager's backstage paper. Flat, warm, real objects.
-- CSS variables. Light = paper: bg `#F4ECDC`, ink `#1B1A17`, cue-red `#B42318`, safe-green `#1F6B3A`, tape-yellow `#E0A800` (background only, always with ink text), line `#CFC3AA`.
-  Dark = "Blackout": bg `#12110F`, text `#F1E9D8`, red `#FF8A7A`, green `#7DD3A0`, yellow `#F2C94C`.
-  Follow `prefers-color-scheme` plus a visible theme toggle.
-- A script `check:contrast` verifies every text/background pair is at least 4.5:1 (3:1 for large text) in both themes and FAILS the build if not.
-- Fonts via `next/font/google` (self-hosted at build, `display: swap`, latin subset): Fraunces (headings), Public Sans (body), IBM Plex Mono (cue numbers and labels only).
-- Signature elements, CSS ONLY (no images, no video, no canvas):
-  - Cards look like paper cue sheets: torn bottom edge (CSS mask), hairline rules, mono cue numbers Q1, Q2, Q3.
-  - Risks carry a rubber-stamp label ("RISK 4/5", red, rotated -3deg) with a short "thunk" animation.
-  - Plan B Switch: a big physical two-position switch labelled PLAN A / PLAN B, with text, not only colour, and a small "STANDBY" light that shows the app is ready.
-  - Timeline = vertical cue sheet: cue number, call date, task, a "HOLD" badge when slack is 0 (critical path).
-  - Budget histogram uses stripe/dot patterns so it works without colour; a marker line shows P80.
-  - Section dividers = strips of gaffer tape (tape-yellow with ink text).
-- One column on phones, 12-column grid on desktop. Max line length about 70 characters. Tap targets at least 44x44px.
-- Motion: tiny CSS transitions only (120-200ms). `prefers-reduced-motion: reduce` turns ALL motion off.
+## 3. Design: "Orbit" (black space hero, white ink, glass surfaces)
+Decided 2026-11-01 by the project owner; replaces the earlier paper "Rehearsal Room" look.
+- Landing `/`: full-screen, non-scrolling Orbit hero built from the owner's spec (`src/app/landing.css`, `landing-intro.css`).
+  Every size is `calc(N * var(--u))` where `--u` is one pixel of the 1563x1006 reference render. Keep those values exact.
+  Background: looping muted planet video with a still poster (external host allowed in the CSP `media-src`/`img-src`).
+  Entrance animation runs once (about 1.7s) then its classes are removed. Copy uses Standby words.
+- App pages: same language. Black `#000`, white ink, muted `#A1A1A6`, glass cards (`rgba(255,255,255,.06)`, 1px `rgba(255,255,255,.15)` border, 14px radius),
+  buttons radius 10px (solid = white/black, ghost = white outline). Status colours: red `#FF8A7A`, green `#7DD3A0`, yellow `#F2C94C`; focus ring `#9B8CFF`.
+  One dark theme only (no theme toggle).
+- Font: Inter variable (opsz + wght) via `next/font/google`, self-hosted at build.
+- Kept elements: Q1/Q2 cue numbers, "RISK n/5" stamp, HOLD badge on the critical path, PLAN A / PLAN B switch with a STANDBY light,
+  striped/dotted histogram patterns (work without colour).
+- `check:contrast` verifies every token pair is at least 4.5:1 (3:1 for the focus ring) and FAILS the build if not.
+- One column on phones. Max line length about 70 characters. Tap targets at least 44x44px (landing hero buttons follow the spec sizes).
+- Motion: short CSS transitions; `prefers-reduced-motion: reduce` turns ALL motion off.
 - `@media print`: the Call Sheet becomes a clean black-on-white one-pager (no nav, no buttons).
-- Pages: `/` landing (with a live sample call sheet), `/login`, `/dashboard` ("Productions"), `/events/new` ("Slate" form),
-  `/events/[id]` (tabs: Call Sheet, Pre-Mortem, Money, Vendors, Guest Panel, Ideas), `/share/[token]` (read-only), `/api/health`.
+- Pages: `/` landing, `/login`, `/dashboard` ("Productions"), `/events/new` ("Slate" form),
+  `/events/[id]` (tabs: Call Sheet, Pre-Mortem, Money, Vendors, Guest Panel, Ideas), `/share/[token]` (read-only), `/api/health`, `/auth/callback`.
 - Copy: short, plain, friendly English. Errors and empty states always say what happened and what to do next.
 
 ## 4. Accessibility (target: Lighthouse 100 and zero axe violations)

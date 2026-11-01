@@ -1,135 +1,97 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import type { ScheduledTask } from "@/lib/timeline/schedule";
 import { buildIcs } from "@/lib/ics/build";
+import { setTaskDoneAction } from "@/app/feature-actions";
 
 interface CallSheetTabProps {
   tasks: ScheduledTask[];
   eventTitle: string;
   eventDate: string;
+  /** When true, ticking a task saves it. Share pages pass false (read-only). */
+  editable?: boolean;
 }
 
-export function CallSheetTab({ tasks, eventTitle, eventDate }: CallSheetTabProps) {
-  const [completed, setCompleted] = useState<Record<string, boolean>>({});
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-  const toggleTask = (id: string) => {
-    setCompleted((prev) => ({ ...prev, [id]: !prev[id] }));
+export function CallSheetTab({ tasks, eventTitle, eventDate, editable = false }: CallSheetTabProps) {
+  const [done, setDone] = useState<Record<string, boolean>>({});
+  const [status, setStatus] = useState("");
+
+  const toggle = async (task: ScheduledTask, value: boolean) => {
+    setDone((prev) => ({ ...prev, [task.id]: value }));
+    if (!UUID.test(task.id)) return;
+    const res = await setTaskDoneAction(task.id, value);
+    if (!res.success) {
+      setDone((prev) => ({ ...prev, [task.id]: !value }));
+      setStatus(res.error ?? "Could not save. Try again.");
+    } else {
+      setStatus(`${task.title}: marked ${value ? "done" : "not done"}.`);
+    }
   };
 
   const downloadIcs = () => {
-    const icsContent = buildIcs(
+    const ics = buildIcs(
       { title: eventTitle, event_date: eventDate },
-      tasks.map((t) => ({
-        id: t.id,
-        title: t.title,
-        due_date: t.due_date,
-        duration_days: t.duration_days,
-      }))
+      tasks.map((t) => ({ id: t.id, title: t.title, due_date: t.due_date, duration_days: t.duration_days }))
     );
-
-    const blob = new Blob([icsContent], { type: "text/calendar;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
+    const url = URL.createObjectURL(new Blob([ics], { type: "text/calendar;charset=utf-8" }));
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${eventTitle.toLowerCase().replace(/[^a-z0-9]/g, "-")}-call-sheet.ics`;
+    a.download = `${eventTitle.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-call-sheet.ics`;
     a.click();
     URL.revokeObjectURL(url);
   };
 
-  const handlePrint = () => {
-    window.print();
-  };
-
   return (
     <div className="flex flex-col gap-4">
-      {/* Controls */}
-      <div className="flex flex-wrap items-center justify-between gap-2 no-print">
-        <div className="text-xs text-[var(--muted)]">
-          Scheduled backward from event call date: <strong className="text-[var(--ink)]">{eventDate}</strong>
-        </div>
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={downloadIcs}
-            className="px-3 py-1.5 border border-[var(--ink)] bg-[var(--card-bg)] hover:bg-[var(--line)] font-mono text-xs rounded min-h-[44px] flex items-center gap-1.5"
-          >
-            <span aria-hidden="true">📅</span> Download .ics
-          </button>
-          <button
-            type="button"
-            onClick={handlePrint}
-            className="px-3 py-1.5 border border-[var(--ink)] bg-[var(--card-bg)] hover:bg-[var(--line)] font-mono text-xs rounded min-h-[44px] flex items-center gap-1.5"
-          >
-            <span aria-hidden="true">🖨️</span> Print Call Sheet
-          </button>
+      <div className="flex flex-wrap items-center justify-between gap-3 no-print">
+        <p className="text-sm text-[var(--muted)]">
+          Timeline scheduled backward from <strong className="text-white">{eventDate}</strong>. HOLD = critical path (no spare days).
+        </p>
+        <div className="flex gap-2">
+          <button type="button" onClick={downloadIcs} className="btn btn-ghost">Download .ics</button>
+          <button type="button" onClick={() => window.print()} className="btn btn-ghost">Print call sheet</button>
         </div>
       </div>
+      <p role="status" aria-live="polite" className="sr-only">{status}</p>
 
-      {/* Cue Sheet Table */}
-      <div className="cue-card divide-y divide-[var(--line)]">
-        <div className="p-3 bg-[var(--bg)] grid grid-cols-12 text-xs font-mono font-bold text-[var(--muted)] uppercase">
-          <div className="col-span-2 sm:col-span-1">Cue</div>
-          <div className="col-span-4 sm:col-span-3">Call Date</div>
-          <div className="col-span-6 sm:col-span-6">Task & Dependencies</div>
-          <div className="hidden sm:block sm:col-span-2 text-right">Slack / Status</div>
-        </div>
-
+      <ol className="cue-card divide-y divide-[var(--line)]" aria-label="Call sheet">
         {tasks.map((task, idx) => {
-          const isDone = completed[task.id] || task.done;
+          const isDone = done[task.id] ?? Boolean(task.done);
           return (
-            <div
-              key={task.id}
-              className={`p-3 grid grid-cols-12 items-center gap-2 transition-colors ${
-                isDone ? "opacity-50 line-through bg-[var(--line)]/20" : ""
-              }`}
-            >
-              <div className="col-span-2 sm:col-span-1 font-mono font-extrabold text-sm text-[var(--cue-red)]">
-                Q{idx + 1}
-              </div>
-              <div className="col-span-4 sm:col-span-3 font-mono text-xs sm:text-sm">
-                <div>{task.due_date}</div>
-                <div className="text-[10px] text-[var(--muted)]">{task.duration_days} day(s)</div>
-              </div>
-              <div className="col-span-6 sm:col-span-6 flex items-start gap-2">
-                <input
-                  type="checkbox"
-                  id={`chk-${task.id}`}
-                  checked={!!isDone}
-                  onChange={() => toggleTask(task.id)}
-                  aria-label={`Mark task completed: ${task.title}`}
-                  className="mt-1 h-4 w-4 rounded accent-[var(--cue-red)]"
-                />
-                <div className="flex-1">
-                  <label
-                    htmlFor={`chk-${task.id}`}
-                    className="cursor-pointer font-medium text-xs sm:text-sm block"
-                  >
-                    {task.title}
-                  </label>
-                  {task.depends_on && task.depends_on.length > 0 && (
-                    <div className="text-[10px] text-[var(--muted)] font-mono">
-                      Depends on {task.depends_on.length} predecessor task(s)
-                    </div>
+            <li key={task.id} className={`p-3 sm:p-4 grid grid-cols-[3rem_1fr] sm:grid-cols-[3rem_8rem_1fr_auto] items-center gap-x-3 gap-y-1 ${isDone ? "opacity-60" : ""}`}>
+              <span className="font-mono font-semibold text-[var(--cue-red)]">Q{idx + 1}</span>
+              <span className="font-mono text-sm">
+                {task.due_date}
+                <span className="block text-xs text-[var(--muted)]">{task.duration_days} day(s)</span>
+              </span>
+              <div className="col-span-2 sm:col-span-1 flex items-start gap-3">
+                {editable ? (
+                  <input type="checkbox" id={`chk-${task.id}`} checked={isDone}
+                    onChange={(e) => void toggle(task, e.target.checked)}
+                    className="mt-0.5 h-5 w-5 accent-white" />
+                ) : null}
+                <label htmlFor={editable ? `chk-${task.id}` : undefined} className={`text-sm ${isDone ? "line-through" : ""}`}>
+                  {task.title}
+                  {isDone && <span className="sr-only"> (done)</span>}
+                  {task.depends_on.length > 0 && (
+                    <span className="block text-xs text-[var(--muted)]">Waits for {task.depends_on.length} earlier task(s)</span>
                   )}
-                </div>
+                </label>
               </div>
-              <div className="col-span-12 sm:col-span-2 flex items-center justify-between sm:justify-end gap-2 pt-1 sm:pt-0">
-                {task.critical && (
-                  <span className="hold-badge" title="Critical path: delay here delays the event">
-                    HOLD (0d)
-                  </span>
+              <span className="col-span-2 sm:col-span-1 sm:text-right">
+                {task.critical ? (
+                  <span className="hold-badge" title="Critical path: a delay here delays the event">HOLD</span>
+                ) : (
+                  <span className="text-xs font-medium text-[var(--safe-green)]">+{task.slack}d slack</span>
                 )}
-                {!task.critical && (
-                  <span className="font-mono text-xs text-[var(--safe-green)] font-semibold">
-                    +{task.slack}d slack
-                  </span>
-                )}
-              </div>
-            </div>
+              </span>
+            </li>
           );
         })}
-      </div>
+      </ol>
     </div>
   );
 }

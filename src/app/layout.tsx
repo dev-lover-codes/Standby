@@ -1,26 +1,13 @@
 import type { Metadata } from "next";
-import { Fraunces, Public_Sans, IBM_Plex_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
+import { connection } from "next/server";
 import "./globals.css";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 
-const fraunces = Fraunces({
-  variable: "--font-fraunces",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
-  display: "swap",
-});
-
-const publicSans = Public_Sans({
-  variable: "--font-public-sans",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-const ibmPlexMono = IBM_Plex_Mono({
-  weight: ["400", "600", "700"],
-  variable: "--font-ibm-plex-mono",
-  subsets: ["latin"],
-  display: "swap",
+  axes: ["opsz"],
+  display: "block",
 });
 
 export const metadata: Metadata = {
@@ -29,26 +16,18 @@ export const metadata: Metadata = {
     "A GenAI-powered planning assistant that helps users organize weddings, birthdays and community events with budgets, timelines, vendor checklists and personalized ideas.",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export const viewport = { width: "device-width", initialScale: 1, viewportFit: "cover" };
+
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  // Render per request so every page gets the CSP nonce set by the proxy.
+  await connection();
   return (
-    <html
-      lang="en"
-      className={`${fraunces.variable} ${publicSans.variable} ${ibmPlexMono.variable}`}
-      suppressHydrationWarning
-    >
-      <body className="flex min-h-screen flex-col">
+    <html lang="en" className={inter.variable}>
+      <body>
         <a href="#main-content" className="skip-to-content">
           Skip to content
         </a>
-        <Header />
-        <main id="main-content" className="flex-1">
-          {children}
-        </main>
-        <Footer />
+        {children}
       </body>
     </html>
   );

@@ -42,12 +42,31 @@ flowchart TD
 
 ---
 
-## 🎨 Design Aesthetic: "The Rehearsal Room"
+## 🎨 Design: "Orbit"
 
-Standby looks and feels like a theatre stage manager's backstage binder:
-- **Palette**: Paper background (`#F4ECDC`), stage ink (`#1B1A17`), cue-red (`#B42318`), safe-green (`#1F6B3A`), and gaffer tape yellow (`#E0A800`). Dark mode switches to high-contrast "Blackout" (`#12110F`).
-- **Signature CSS-Only Elements**: Torn bottom edge cue cards, `-3deg` stamped risk labels, HOLD badges, physical switch tracks, and stripe-patterned histogram bars.
-- **Accessibility & Contrast**: Built-in script `npm run check:contrast` validates WCAG AA contrast (minimum 4.5:1 for normal text, 3:1 for large text) across all light and dark token pairs.
+- **Landing page**: a full-screen, non-scrolling space hero (planet video, Inter type, glass pill, two-line headline with a mask reveal). Sizes come from a 1563x1006 reference and scale as one unit.
+- **App pages**: the same look. Black background, white ink, glass cards, white solid and outline buttons, Inter only.
+- **Kept from the stage-manager idea**: Q1/Q2 cue numbers, "RISK n/5" stamps, HOLD badges on the critical path, the PLAN A / PLAN B switch, and striped/dotted histogram bars that work without colour.
+- **Contrast**: `npm run check:contrast` checks every colour pair (WCAG AA) and fails the build if one is too low.
+- The background video and poster load from an external CDN supplied with the design. ⚠️ UNVERIFIED: that this host stays available long term; copy the files into `public/` if you need guarantees.
+
+---
+
+## 🔑 Make login work (one-time setup)
+
+1. **Create the database tables.** In your Supabase project, run `supabase/migrations/20261101000000_standby_schema.sql` (Dashboard → SQL Editor → paste → Run).
+   If the Supabase GitHub integration is connected with migrations enabled, it applies this file when you push to `main`. ⚠️ UNVERIFIED: whether your integration is set to deploy migrations; check Dashboard → Integrations → GitHub.
+2. **Copy the keys.** Dashboard → Project Settings → API. Put the Project URL and the `anon` public key in `.env.local` (and in Vercel → Settings → Environment Variables):
+   ```bash
+   NEXT_PUBLIC_SUPABASE_URL=https://YOUR-REF.supabase.co
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=YOUR-ANON-KEY
+   GEMINI_API_KEY=            # optional; without it the app uses safe templates
+   NEXT_PUBLIC_SITE_URL=http://localhost:3000
+   ```
+   Never use the service-role key.
+3. **Turn on guest mode.** Authentication → Sign In / Providers → enable **Anonymous sign-ins** (needed for "Try as guest").
+4. **Allow the email link back.** Authentication → URL Configuration: set Site URL to your site, and add `http://localhost:3000/auth/callback` and `https://YOUR-SITE/auth/callback` to Redirect URLs.
+5. Restart `npm run dev`. The login page shows a yellow notice while the keys are missing.
 
 ---
 

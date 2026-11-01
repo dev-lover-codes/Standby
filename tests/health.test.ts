@@ -10,7 +10,7 @@ vi.mock("@/lib/supabase/server", () => ({
 
 describe("Health API Route (/api/health)", () => {
   it("returns 200 with { ok: true, time } when ping succeeds", async () => {
-    mockRpc.mockResolvedValueOnce({ data: "pong", error: null });
+    mockRpc.mockResolvedValueOnce({ data: "2026-11-01T00:00:00Z", error: null });
 
     const { GET } = await import("@/app/api/health/route");
     const response = await GET();

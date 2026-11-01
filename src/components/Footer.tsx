@@ -1,15 +1,11 @@
 export function Footer() {
   return (
-    <footer className="border-t border-[var(--line)] bg-[var(--bg)] px-4 py-6 sm:px-6 mt-auto">
-      <div className="mx-auto flex max-w-6xl flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-[var(--muted)]">
-        <div>
-          <span className="font-bold text-[var(--ink)]">Standby</span> &mdash;
-          &quot;Standby. Your event is rehearsed.&quot;
-        </div>
-        <div className="flex items-center gap-4">
-          <span>PromptWars Challenge 5: Celebration &amp; Event Planner</span>
-          <span className="text-[var(--cue-red)] font-semibold">CUE: STANDBY</span>
-        </div>
+    <footer className="border-t border-[var(--line)] px-4 py-6 sm:px-6 mt-auto no-print">
+      <div className="mx-auto flex max-w-5xl flex-col sm:flex-row items-center justify-between gap-2 text-xs text-[var(--muted)]">
+        <p>
+          <span className="text-[var(--ink)] font-medium">Standby</span> · Your event is rehearsed.
+        </p>
+        <p>PromptWars Challenge 5 · Celebration &amp; Event Planner</p>
       </div>
     </footer>
   );

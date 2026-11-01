@@ -2,7 +2,7 @@ import React from "react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import NewEventPage from "@/app/events/new/page";
+import NewEventPage from "@/app/(app)/events/new/page";
 
 const mockPush = vi.fn();
 vi.mock("next/navigation", () => ({

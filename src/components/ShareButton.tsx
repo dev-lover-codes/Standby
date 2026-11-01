@@ -16,18 +16,23 @@ export function ShareButton({ eventId }: ShareButtonProps) {
     try {
       setLoading(true);
       const res = await createShareLinkAction(eventId, 7);
-      if (!res.success || !res.token) {
-        setAnnouncement("Could not generate share link. Please try again.");
+      const token = res.data?.token;
+      if (!res.success || !token) {
+        setAnnouncement(res.error ?? "Could not create a share link. Try again.");
         return;
       }
 
-      const shareUrl = `${window.location.origin}/share/${res.token}`;
-      await navigator.clipboard.writeText(shareUrl);
-      setCopied(true);
-      setAnnouncement("Read-only share link copied to clipboard. Link expires in 7 days.");
+      const shareUrl = `${window.location.origin}/share/${token}`;
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        setCopied(true);
+        setAnnouncement("Read-only link copied. It expires in 7 days.");
+      } catch {
+        setAnnouncement(`Copy this read-only link (expires in 7 days): ${shareUrl}`);
+      }
       setTimeout(() => setCopied(false), 4000);
     } catch {
-      setAnnouncement("Failed to copy link. Please check permissions.");
+      setAnnouncement("Could not create a share link. Check your connection and try again.");
     } finally {
       setLoading(false);
     }
@@ -39,14 +44,13 @@ export function ShareButton({ eventId }: ShareButtonProps) {
         type="button"
         onClick={handleShare}
         disabled={loading}
-        className="px-3 py-1.5 border border-[var(--ink)] bg-[var(--card-bg)] hover:bg-[var(--line)] font-mono text-xs rounded min-h-[44px] flex items-center gap-1.5 transition-colors"
+        className="btn btn-ghost"
       >
-        <span aria-hidden="true">🔗</span>
-        <span>{loading ? "Generating..." : copied ? "Copied!" : "Share Link"}</span>
+        <span>{loading ? "Creating link…" : copied ? "Copied" : "Share read-only link"}</span>
       </button>
 
       {/* Screen reader live notification */}
-      <span className="sr-only" role="status" aria-live="polite">
+      <span className="block text-xs text-[var(--muted)] mt-1 max-w-[16rem] break-all" role="status" aria-live="polite">
         {announcement}
       </span>
     </div>

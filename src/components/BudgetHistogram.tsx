@@ -38,7 +38,7 @@ export default function BudgetHistogram({
               className="flex-1 flex flex-col items-center h-full justify-end group relative"
             >
               <div
-                className="opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity absolute -top-8 bg-[var(--ink)] text-[var(--bg)] text-[10px] font-mono px-1.5 py-0.5 rounded pointer-events-none whitespace-nowrap z-10"
+                className="opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity absolute -top-8 bg-white text-black text-xs font-mono px-1.5 py-0.5 rounded pointer-events-none whitespace-nowrap z-10"
                 aria-hidden="true"
               >
                 {currencySymbol}
@@ -52,7 +52,7 @@ export default function BudgetHistogram({
                 }`}
               />
 
-              <span className="text-[9px] font-mono text-[var(--muted)] truncate w-full text-center mt-1 hidden sm:block">
+              <span className="text-xs font-mono text-[var(--muted)] truncate w-full text-center mt-1 hidden sm:block">
                 {Math.round(bin.binStart / 1000)}k
               </span>
             </div>

@@ -31,19 +31,19 @@ export function MoneyTab({ items, targetBudget }: MoneyTabProps) {
       {/* Simulation KPI Badges */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <div className="cue-card p-3">
-          <span className="font-mono text-[10px] uppercase text-[var(--muted)] block">Target Budget</span>
+          <span className="font-mono text-xs uppercase text-[var(--muted)] block">Target Budget</span>
           <span className="font-mono font-bold text-lg sm:text-xl text-[var(--ink)]">
             ${Math.round(targetBudget).toLocaleString()}
           </span>
         </div>
         <div className="cue-card p-3">
-          <span className="font-mono text-[10px] uppercase text-[var(--muted)] block">P50 (Median)</span>
+          <span className="font-mono text-xs uppercase text-[var(--muted)] block">P50 (Median)</span>
           <span className="font-mono font-bold text-lg sm:text-xl text-[var(--ink)]">
             ${Math.round(sim.p50).toLocaleString()}
           </span>
         </div>
         <div className="cue-card p-3 border-2 border-[var(--cue-red)]">
-          <span className="font-mono text-[10px] uppercase text-[var(--cue-red)] font-bold block">
+          <span className="font-mono text-xs uppercase text-[var(--cue-red)] font-bold block">
             P80 Reality (80% Safe)
           </span>
           <span className="font-mono font-bold text-lg sm:text-xl text-[var(--cue-red)]">
@@ -51,7 +51,7 @@ export function MoneyTab({ items, targetBudget }: MoneyTabProps) {
           </span>
         </div>
         <div className="cue-card p-3">
-          <span className="font-mono text-[10px] uppercase text-[var(--muted)] block">Risk of Overrun</span>
+          <span className="font-mono text-xs uppercase text-[var(--muted)] block">Risk of Overrun</span>
           <span
             className={`font-mono font-bold text-lg sm:text-xl ${
               overBudgetPercent > 30 ? "text-[var(--cue-red)]" : "text-[var(--safe-green)]"
@@ -65,9 +65,9 @@ export function MoneyTab({ items, targetBudget }: MoneyTabProps) {
       {/* Histogram Simulator */}
       <div className="cue-card p-4 sm:p-5">
         <div className="mb-2">
-          <h3 className="font-display font-bold text-base sm:text-lg">
+          <h2 className="text-lg font-semibold">
             Budget Reality Simulator (Monte Carlo)
-          </h3>
+          </h2>
           <p className="text-xs text-[var(--muted)]">
             Pure code, NOT AI. 2,000 triangular random distribution runs factoring min, likely, and max vendor variance.
           </p>
@@ -84,9 +84,9 @@ export function MoneyTab({ items, targetBudget }: MoneyTabProps) {
 
       {/* Itemized Budget Table */}
       <div className="cue-card p-4">
-        <h4 className="font-mono text-xs uppercase font-bold text-[var(--muted)] mb-3">
+        <h3 className="text-sm font-semibold text-[var(--muted)] mb-3">
           Itemized Budget Variance Parameters
-        </h4>
+        </h3>
         <div className="overflow-x-auto">
           <table className="w-full text-left font-mono text-xs">
             <thead>

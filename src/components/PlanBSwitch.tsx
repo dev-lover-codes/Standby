@@ -24,7 +24,7 @@ export function PlanBSwitch({
   const isPlanB = currentScenario !== null;
 
   return (
-    <div className="cue-card p-4 sm:p-5 flex flex-col gap-4 border-2 border-[var(--ink)]">
+    <div className="cue-card p-4 sm:p-5 flex flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <span
@@ -84,14 +84,14 @@ export function PlanBSwitch({
                   onClick={() => onScenarioChange(s.id)}
                   disabled={disabled}
                   aria-pressed={active}
-                  className={`p-2 text-left border rounded transition-all min-h-[44px] ${
+                  className={`p-2 text-left border rounded-[10px] transition-colors min-h-[44px] ${
                     active
                       ? "border-[var(--ink)] bg-[var(--ink)] text-[var(--bg)] font-bold shadow-sm"
                       : "border-[var(--line)] hover:border-[var(--ink)] text-[var(--ink)]"
                   }`}
                 >
                   <div className="font-mono text-xs leading-tight">{s.label}</div>
-                  <div className="text-[10px] opacity-80 truncate hidden sm:block">
+                  <div className="text-xs opacity-80 truncate hidden sm:block">
                     {s.desc}
                   </div>
                 </button>

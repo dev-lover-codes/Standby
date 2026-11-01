@@ -38,26 +38,18 @@ function contrastRatio(hex1: string, hex2: string): number {
   return (lighter + 0.05) / (darker + 0.05);
 }
 
-// Standby Design Tokens defined in AGENTS.md
-const tokens = {
-  light: {
-    name: "Paper (Light)",
-    bg: "#F4ECDC",
-    ink: "#1B1A17",
-    cueRed: "#B42318",
-    safeGreen: "#1F6B3A",
-    tapeYellowBg: "#E0A800",
-    line: "#CFC3AA",
-  },
-  dark: {
-    name: "Blackout (Dark)",
-    bg: "#12110F",
-    text: "#F1E9D8",
-    red: "#FF8A7A",
-    green: "#7DD3A0",
-    yellow: "#F2C94C",
-    line: "#38352F",
-  },
+// Standby "Orbit" tokens (src/app/globals.css). One dark theme; glass surfaces sit on black.
+const t = {
+  bg: "#000000",
+  card: "#0e0e10",
+  ink: "#FFFFFF",
+  inkNav: "#E8E8E8", // rgba(255,255,255,.91) on black
+  muted: "#A1A1A6",
+  sub: "#808080", // landing sub-line: rgba(255,255,255,.50) on black, large-ish text
+  red: "#FF8A7A",
+  green: "#7DD3A0",
+  yellow: "#F2C94C",
+  focus: "#9B8CFF",
 };
 
 interface CheckPair {
@@ -69,17 +61,19 @@ interface CheckPair {
 }
 
 const pairs: CheckPair[] = [
-  // Light Theme Pairs
-  { theme: "Light", label: "Ink on Paper BG", foreground: tokens.light.ink, background: tokens.light.bg, minRatio: 4.5 },
-  { theme: "Light", label: "Cue-Red on Paper BG", foreground: tokens.light.cueRed, background: tokens.light.bg, minRatio: 4.5 },
-  { theme: "Light", label: "Safe-Green on Paper BG", foreground: tokens.light.safeGreen, background: tokens.light.bg, minRatio: 4.5 },
-  { theme: "Light", label: "Ink on Tape-Yellow BG", foreground: tokens.light.ink, background: tokens.light.tapeYellowBg, minRatio: 4.5 },
-
-  // Dark Theme Pairs
-  { theme: "Dark", label: "Text on Blackout BG", foreground: tokens.dark.text, background: tokens.dark.bg, minRatio: 4.5 },
-  { theme: "Dark", label: "Red on Blackout BG", foreground: tokens.dark.red, background: tokens.dark.bg, minRatio: 4.5 },
-  { theme: "Dark", label: "Green on Blackout BG", foreground: tokens.dark.green, background: tokens.dark.bg, minRatio: 4.5 },
-  { theme: "Dark", label: "Yellow on Blackout BG", foreground: tokens.dark.yellow, background: tokens.dark.bg, minRatio: 4.5 },
+  { theme: "Orbit", label: "Ink on black", foreground: t.ink, background: t.bg, minRatio: 4.5 },
+  { theme: "Orbit", label: "Nav ink on black", foreground: t.inkNav, background: t.bg, minRatio: 4.5 },
+  { theme: "Orbit", label: "Muted on black", foreground: t.muted, background: t.bg, minRatio: 4.5 },
+  { theme: "Orbit", label: "Muted on card", foreground: t.muted, background: t.card, minRatio: 4.5 },
+  { theme: "Orbit", label: "Landing sub-line on black", foreground: t.sub, background: t.bg, minRatio: 4.5 },
+  { theme: "Orbit", label: "Red on black", foreground: t.red, background: t.bg, minRatio: 4.5 },
+  { theme: "Orbit", label: "Green on black", foreground: t.green, background: t.bg, minRatio: 4.5 },
+  { theme: "Orbit", label: "Yellow on black", foreground: t.yellow, background: t.bg, minRatio: 4.5 },
+  { theme: "Orbit", label: "Black on white button", foreground: t.bg, background: t.ink, minRatio: 4.5 },
+  { theme: "Orbit", label: "Black on HOLD badge", foreground: t.bg, background: t.red, minRatio: 4.5 },
+  { theme: "Orbit", label: "Black on OK badge", foreground: t.bg, background: t.green, minRatio: 4.5 },
+  { theme: "Orbit", label: "Black on fix badge", foreground: t.bg, background: t.yellow, minRatio: 4.5 },
+  { theme: "Orbit", label: "Focus ring on black", foreground: t.focus, background: t.bg, minRatio: 3 },
 ];
 
 console.log("=== Standby Contrast Ratio Verification ===\n");

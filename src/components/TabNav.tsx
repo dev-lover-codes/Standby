@@ -44,7 +44,7 @@ export function TabNav({ tabs, activeTab, onTabChange }: TabNavProps) {
     <div
       role="tablist"
       aria-label="Event Rehearsal Sections"
-      className="flex border-b-2 border-[var(--ink)] overflow-x-auto gap-1 no-scrollbar pt-2"
+      className="flex gap-1 overflow-x-auto p-1 rounded-[12px] bg-white/5 border border-[var(--line)]"
     >
       {tabs.map((tab, idx) => {
         const isActive = tab.id === activeTab;
@@ -61,16 +61,14 @@ export function TabNav({ tabs, activeTab, onTabChange }: TabNavProps) {
             tabIndex={isActive ? 0 : -1}
             onClick={() => onTabChange(tab.id)}
             onKeyDown={(e) => handleKeyDown(e, idx)}
-            className={`px-3 sm:px-4 py-2.5 font-mono text-xs sm:text-sm whitespace-nowrap border-t border-l border-r rounded-t transition-colors min-h-[44px] flex items-center gap-1.5 ${
-              isActive
-                ? "bg-[var(--card-bg)] text-[var(--ink)] border-[var(--ink)] font-bold -mb-[2px] border-b-2 border-b-[var(--card-bg)] z-10"
-                : "bg-transparent text-[var(--muted)] border-transparent hover:text-[var(--ink)] hover:border-[var(--line)]"
+            className={`px-3 sm:px-4 rounded-[9px] text-sm whitespace-nowrap transition-colors min-h-[44px] flex items-center gap-1.5 ${
+              isActive ? "bg-white text-black font-semibold" : "text-[var(--muted)] hover:text-white"
             }`}
           >
-            <span className="text-[10px] text-[var(--cue-red)] font-extrabold">{tab.cue}</span>
+            <span className={`font-mono text-xs ${isActive ? "text-black/70" : "text-[var(--cue-red)]"}`}>{tab.cue}</span>
             <span>{tab.label}</span>
             {tab.count !== undefined && (
-              <span className="ml-1 text-[10px] px-1.5 py-0.2 bg-[var(--line)] text-[var(--ink)] rounded-full">
+              <span className={`text-xs px-1.5 rounded-full ${isActive ? "bg-black/10" : "bg-white/10"}`}>
                 {tab.count}
               </span>
             )}

@@ -9,7 +9,7 @@ This document outlines the architectural principles, data flows, security bounda
 1. **Rehearse Before Execution**: Every calculation (money variance, backward schedules, crisis contingencies) happens before any physical or monetary commitment.
 2. **Pure Business Logic in `src/lib`**: All simulation algorithms, topological graph schedulers, scenario transforms, and calendar serialization functions are pure TypeScript functions. They have no DOM or React dependencies and are tested with 100% repeatability via seeded PRNGs.
 3. **Resilient AI Pipeline**: The Gemini API is treated as an optional enhancement. If the API is slow, rate-limited, or unconfigured, the application gracefully falls back to deterministic local templates without failing or crashing.
-4. **Accessible "Rehearsal Room" Design**: Flat, warm, real objects resembling a stage manager's paper binder. No purple gradients or space motifs. Zero axe-core accessibility violations.
+4. **Accessible "Orbit" Design**: Black space hero landing page (planet video, Inter, glass surfaces); app pages share the same black, white and glass style. Zero axe-core accessibility violations.
 
 ---
 
@@ -39,7 +39,7 @@ This document outlines the architectural principles, data flows, security bounda
 │       ├── ics/               # RFC 5545 calendar serializer with 75-octet folding
 │       ├── scenarios/         # Deterministic Plan B transforms
 │       ├── share/             # Crypto-random token generation & validation
-│       ├── supabase/          # SSR browser, server, and middleware clients
+│       ├── supabase/          # SSR browser and server clients, session helpers (proxy refreshes sessions)
 │       ├── timeline/          # Kahn's topological backward scheduler & critical path
 │       └── validation/        # Zod schemas for all models and inputs
 └── supabase/

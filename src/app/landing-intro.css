@@ -1,0 +1,36 @@
+/* Landing entrance: runs once (about 1.7s), then the intro classes are removed. */
+@media (prefers-reduced-motion: no-preference) {
+  .frame {
+    --e-reveal: cubic-bezier(.18,.85,.26,1);
+    --e-soft: cubic-bezier(.22,1,.36,1);
+    --e-nav: cubic-bezier(.33,1,.68,1);
+    --rise: calc(10 * var(--u));
+    --rise-lg: calc(13 * var(--u));
+  }
+  .intro .brand, .intro .links a, .intro .actions > .btn, .intro .actions > .menu,
+  .intro .pill, .intro .hero p, .intro .cta .btn { opacity: 0; }
+  .intro .ln-i { transform: translate3d(0,115%,0); }
+  .intro .brand, .intro .pill, .intro .hero p, .intro .ln-i, .intro .cta .btn { will-change: transform, opacity; }
+
+  @keyframes i-rise { from { opacity: 0; transform: translate3d(0,var(--rise),0); } to { opacity: 1; transform: none; } }
+  @keyframes i-rise-cy { from { opacity: 0; transform: translateY(-50%) translate3d(0,var(--rise),0); } to { opacity: 1; transform: translateY(-50%); } }
+  @keyframes i-pill { from { opacity: 0; transform: translateX(-50%) translate3d(0,var(--rise-lg),0) scale(.972); } to { opacity: 1; transform: translateX(-50%); } }
+  @keyframes i-sub { from { opacity: 0; transform: translateX(calc(-50% + 0.25 * var(--u))) translate3d(0,var(--rise-lg),0); } to { opacity: 1; transform: translateX(calc(-50% + 0.25 * var(--u))); } }
+  @keyframes i-btn { from { opacity: 0; transform: translate3d(0,var(--rise-lg),0) scale(.986); } to { opacity: 1; transform: none; } }
+  @keyframes i-line { from { transform: translate3d(0,115%,0); } to { transform: none; } }
+
+  .intro-play .brand { animation: i-rise-cy .62s var(--e-nav) 0s both; }
+  .intro-play .links a:nth-child(1) { animation: i-rise .55s var(--e-nav) .070s both; }
+  .intro-play .links a:nth-child(2) { animation: i-rise .55s var(--e-nav) .115s both; }
+  .intro-play .links a:nth-child(3) { animation: i-rise .55s var(--e-nav) .160s both; }
+  .intro-play .links a:nth-child(4) { animation: i-rise .55s var(--e-nav) .205s both; }
+  .intro-play .links a:nth-child(5) { animation: i-rise .55s var(--e-nav) .250s both; }
+  .intro-play .actions > .btn, .intro-play .actions > .menu { animation: i-rise .55s var(--e-nav) .215s both; }
+  .intro-play .actions > .ghost { animation: i-rise .55s var(--e-nav) .160s both; }
+  .intro-play .pill { animation: i-pill .62s var(--e-soft) .26s both; }
+  .intro-play .ln:nth-child(1) .ln-i { animation: i-line .95s var(--e-reveal) .34s both; }
+  .intro-play .ln:nth-child(2) .ln-i { animation: i-line .95s var(--e-reveal) .48s both; }
+  .intro-play .hero p { animation: i-sub .70s var(--e-soft) .86s both; }
+  .intro-play .cta .btn:nth-child(1) { animation: i-btn .62s var(--e-soft) 1.00s both; }
+  .intro-play .cta .btn:nth-child(2) { animation: i-btn .62s var(--e-soft) 1.07s both; }
+}

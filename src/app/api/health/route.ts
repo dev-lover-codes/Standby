@@ -10,7 +10,7 @@ export async function GET() {
     const supabase = await createClient();
     const { data, error } = await supabase.rpc("ping");
 
-    if (error || data !== "pong") {
+    if (error || !data) {
       return NextResponse.json(
         { ok: false, error: "Database unavailable", time },
         { status: 503, headers: { "Cache-Control": "no-store, max-age=0" } }

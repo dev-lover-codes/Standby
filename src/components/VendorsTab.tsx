@@ -1,100 +1,87 @@
 "use client";
 
-import React, { useState } from "react";
-
-export type VendorStatus = "to_call" | "quoted" | "booked" | "confirmed";
+import { useState } from "react";
+import { updateVendorAction } from "@/app/feature-actions";
+import type { VendorStatus } from "@/lib/validation/schemas";
 
 export interface VendorItem {
   id: string;
   category: string;
   name: string;
   status: VendorStatus;
-  quote: number;
+  quote: number | null;
   deadline: string;
 }
 
 interface VendorsTabProps {
   initialVendors: VendorItem[];
+  /** When true, changes are saved. Share pages pass false (read-only). */
+  editable?: boolean;
 }
 
-const STATUS_CONFIG: Record<VendorStatus, { label: string; bg: string; text: string }> = {
-  to_call: { label: "To Call", bg: "bg-[var(--line)]", text: "text-[var(--ink)]" },
-  quoted: { label: "Quoted", bg: "bg-[var(--tape-yellow)]", text: "text-[#1B1A17]" },
-  booked: { label: "Booked", bg: "bg-[var(--safe-green)]", text: "text-white" },
-  confirmed: { label: "Confirmed", bg: "bg-[var(--ink)]", text: "text-[var(--bg)]" },
-};
+const STATUS_LABEL: Record<VendorStatus, string> = { to_call: "To call", quoted: "Quoted", booked: "Booked", confirmed: "Confirmed" };
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const FIELD = "min-h-[44px] w-full px-2 rounded-[10px] bg-white/5 border border-[var(--line)] text-sm text-white";
 
-export function VendorsTab({ initialVendors }: VendorsTabProps) {
-  const [vendors, setVendors] = useState<VendorItem[]>(initialVendors);
+export function VendorsTab({ initialVendors, editable = false }: VendorsTabProps) {
+  const [vendors, setVendors] = useState(initialVendors);
+  const [status, setStatus] = useState("");
 
-  const handleStatusChange = (id: string, newStatus: VendorStatus) => {
-    setVendors((prev) =>
-      prev.map((v) => (v.id === id ? { ...v, status: newStatus } : v))
-    );
+  const save = async (v: VendorItem, patch: Partial<Pick<VendorItem, "status" | "quote">> & { deadline?: string | null }) => {
+    setVendors((prev) => prev.map((x) => (x.id === v.id ? { ...x, ...patch, deadline: "deadline" in patch ? patch.deadline ?? "" : x.deadline } : x)));
+    if (!editable || !UUID.test(v.id)) return;
+    const res = await updateVendorAction(v.id, patch);
+    setStatus(res.success ? `${v.category} saved.` : res.error ?? "Could not save. Try again.");
   };
 
-  const bookedCount = vendors.filter(
-    (v) => v.status === "booked" || v.status === "confirmed"
-  ).length;
+  const secured = vendors.filter((v) => v.status === "booked" || v.status === "confirmed").length;
 
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h3 className="font-display font-bold text-base">Vendor Checklist</h3>
-        <span className="font-mono text-xs px-2.5 py-1 bg-[var(--card-bg)] border border-[var(--line)] rounded">
-          Status: <strong>{bookedCount}</strong> of {vendors.length} secured
-        </span>
+        <h2 className="text-lg font-semibold">Vendor checklist</h2>
+        <span className="gaffer-tape text-xs">{secured} of {vendors.length} booked</span>
       </div>
+      <p role="status" aria-live="polite" className="sr-only">{status}</p>
 
-      <div className="cue-card divide-y divide-[var(--line)]">
-        <div className="p-3 bg-[var(--bg)] grid grid-cols-12 text-xs font-mono font-bold text-[var(--muted)] uppercase">
-          <div className="col-span-4 sm:col-span-3">Category & Contact</div>
-          <div className="col-span-3 sm:col-span-3">Deadline</div>
-          <div className="col-span-2 sm:col-span-3 text-right">Quote</div>
-          <div className="col-span-3 sm:col-span-3 text-right">Status</div>
-        </div>
-
-        {vendors.map((vendor) => {
-          const cfg = STATUS_CONFIG[vendor.status] || STATUS_CONFIG.to_call;
-          return (
-            <div key={vendor.id} className="p-3 grid grid-cols-12 items-center gap-2">
-              <div className="col-span-4 sm:col-span-3">
-                <span className="font-mono text-[10px] text-[var(--muted)] uppercase block">
-                  {vendor.category}
-                </span>
-                <span className="font-semibold text-xs sm:text-sm text-[var(--ink)]">
-                  {vendor.name}
-                </span>
-              </div>
-
-              <div className="col-span-3 sm:col-span-3 font-mono text-xs text-[var(--ink)]">
-                {vendor.deadline || "TBD"}
-              </div>
-
-              <div className="col-span-2 sm:col-span-3 text-right font-mono font-bold text-xs sm:text-sm">
-                ${vendor.quote?.toLocaleString() ?? 0}
-              </div>
-
-              <div className="col-span-3 sm:col-span-3 flex justify-end">
-                <label htmlFor={`status-${vendor.id}`} className="sr-only">
-                  Update status for {vendor.name}
-                </label>
-                <select
-                  id={`status-${vendor.id}`}
-                  value={vendor.status}
-                  onChange={(e) => handleStatusChange(vendor.id, e.target.value as VendorStatus)}
-                  className={`font-mono text-xs font-bold px-2 py-1 rounded border border-[var(--ink)] cursor-pointer min-h-[44px] ${cfg.bg} ${cfg.text}`}
-                >
-                  <option value="to_call">To Call</option>
-                  <option value="quoted">Quoted</option>
-                  <option value="booked">Booked</option>
-                  <option value="confirmed">Confirmed</option>
-                </select>
-              </div>
+      <ul className="cue-card divide-y divide-[var(--line)]">
+        {vendors.map((v) => (
+          <li key={v.id} className="p-4 grid grid-cols-1 sm:grid-cols-[1fr_9rem_8rem_10rem] gap-3 sm:items-end">
+            <div>
+              <span className="block text-xs uppercase tracking-wide text-[var(--muted)]">{v.category}</span>
+              <span className="text-sm">{v.name}</span>
             </div>
-          );
-        })}
-      </div>
+            {editable ? (
+              <>
+                <label className="text-xs text-[var(--muted)]">Status
+                  <select value={v.status} className={FIELD} onChange={(e) => void save(v, { status: e.target.value as VendorStatus })}>
+                    {Object.entries(STATUS_LABEL).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                  </select>
+                </label>
+                <label className="text-xs text-[var(--muted)]">Quote ($)
+                  <input type="number" min={0} inputMode="decimal" defaultValue={v.quote ?? ""} className={FIELD}
+                    onBlur={(e) => {
+                      const quote = e.target.value === "" ? null : Number(e.target.value);
+                      if (quote !== v.quote) void save(v, { quote });
+                    }} />
+                </label>
+                <label className="text-xs text-[var(--muted)]">Deadline
+                  <input type="date" defaultValue={v.deadline} className={FIELD}
+                    onBlur={(e) => {
+                      if (e.target.value !== v.deadline) void save(v, { deadline: e.target.value || null });
+                    }} />
+                </label>
+              </>
+            ) : (
+              <>
+                <span className="text-sm">{STATUS_LABEL[v.status]}</span>
+                <span className="text-sm font-mono">{v.quote === null ? "No quote" : `$${v.quote.toLocaleString()}`}</span>
+                <span className="text-sm font-mono">{v.deadline || "No deadline"}</span>
+              </>
+            )}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
