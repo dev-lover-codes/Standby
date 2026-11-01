@@ -61,11 +61,11 @@ Standby is an event & celebration planner answering PromptWars Challenge 5. It h
 - [x] Server Actions in `src/app/actions.ts`: `createEvent`, `runPreMortem`, `runGuestPanel`, `applyScenarioAction`, `createShareLink`, `deleteEvent`.
 - [x] Tests with mocked AI scenarios.
 
-### Phase 5: Rehearsal Room UI
-- [ ] `/` Landing page: Hero, tagline, live static sample Call Sheet, 3 feature pillars.
-- [ ] `/dashboard`: Productions list with cue-sheet cards, days left badge, accessible delete confirmation dialog.
-- [ ] `/events/new`: Slate brief form with live char counter, event kind, date, guest count, budget, outdoor toggle.
-- [ ] `/events/[id]`:
+### Phase 5: Rehearsal Room UI (COMPLETED)
+- [x] `/` Landing page: Hero, tagline, live static sample Call Sheet, 3 feature pillars.
+- [x] `/dashboard`: Productions list with cue-sheet cards, days left badge, accessible delete confirmation dialog.
+- [x] `/events/new`: Slate brief form with live char counter, event kind, date, guest count, budget, outdoor toggle.
+- [x] `/events/[id]`:
   - Physical Plan B Switch & scenario picker.
   - ARIA tabs (Call Sheet, Pre-Mortem, Money, Vendors, Guest Panel, Ideas).
   - Call Sheet: Q cue list, call dates, HOLD critical path badges, checkbox toggle, .ics download.
@@ -74,8 +74,8 @@ Standby is an event & celebration planner answering PromptWars Challenge 5. It h
   - Vendors: Checklist table, status selectors, quote & deadline, progress indicator.
   - Guest Panel: 4 persona cards + accessibility checks.
   - Ideas: Personalized idea cards.
-- [ ] `/share/[token]`: Read-only public share view.
-- [ ] Print stylesheet (`@media print` for clean 1-page Call Sheet).
+- [x] `/share/[token]`: Read-only public share view.
+- [x] Print stylesheet (`@media print` for clean 1-page Call Sheet).
 
 ### Phase 6: Hardening (Security, Performance, A11Y)
 - [ ] Nonce-based CSP & security headers in `middleware.ts`.

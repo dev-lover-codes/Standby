@@ -147,6 +147,23 @@ export async function createEvent(rawInput: unknown): Promise<ActionResult<{ eve
   return { success: true, data: { eventId }, source: planResult.source };
 }
 
+export async function createEventAction(formData: FormData): Promise<{ success: boolean; eventId?: string; error?: string }> {
+  const rawInput = {
+    title: formData.get("title"),
+    kind: formData.get("kind"),
+    event_date: formData.get("event_date"),
+    guest_count: Number(formData.get("guest_count")),
+    budget_total: Number(formData.get("budget_total") || formData.get("target_budget")),
+    outdoor: formData.get("outdoor") === "on" || formData.get("is_outdoor") === "on",
+    brief: formData.get("brief"),
+  };
+  const res = await createEvent(rawInput);
+  if (!res.success) {
+    return { success: false, error: res.error };
+  }
+  return { success: true, eventId: res.data?.eventId };
+}
+
 export async function runPreMortemAction(eventId: string): Promise<ActionResult<unknown>> {
   const supabase = await createClient();
   const { data: userData } = await supabase.auth.getUser();
@@ -248,13 +265,16 @@ export async function applyScenarioAction(
   };
 }
 
-export async function createShareLinkAction(eventId: string): Promise<ActionResult<{ token: string }>> {
+export async function createShareLinkAction(
+  eventId: string,
+  _expiresInDays = 7
+): Promise<ActionResult<{ token: string }> & { token?: string }> {
   const supabase = await createClient();
   const { data: userData } = await supabase.auth.getUser();
   if (!userData?.user) return { success: false, error: "Unauthorized" };
 
   const token = createShareToken();
-  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+  const expiresAt = new Date(Date.now() + _expiresInDays * 24 * 60 * 60 * 1000).toISOString();
 
   const { error } = await supabase.from("share_links").insert({
     token,
@@ -264,7 +284,7 @@ export async function createShareLinkAction(eventId: string): Promise<ActionResu
   });
 
   if (error) return { success: false, error: error.message };
-  return { success: true, data: { token } };
+  return { success: true, data: { token }, token };
 }
 
 export async function deleteEventAction(eventId: string): Promise<ActionResult<null>> {
