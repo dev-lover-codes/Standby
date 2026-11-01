@@ -77,10 +77,10 @@ Standby is an event & celebration planner answering PromptWars Challenge 5. It h
 - [x] `/share/[token]`: Read-only public share view.
 - [x] Print stylesheet (`@media print` for clean 1-page Call Sheet).
 
-### Phase 6: Hardening (Security, Performance, A11Y)
-- [ ] Nonce-based CSP & security headers in `middleware.ts`.
-- [ ] Lazy loading for heavy elements, bundle optimization.
-- [ ] Accessibility review: ARIA landmarks, focus rings, keyboard navigability, contrast.
+### Phase 6: Hardening (Security, Performance, A11Y) (COMPLETED)
+- [x] Nonce-based CSP & security headers in `middleware.ts`.
+- [x] Lazy loading for heavy elements, bundle optimization.
+- [x] Accessibility review: ARIA landmarks, focus rings, keyboard navigability, contrast.
 
 ### Phase 7: Tests, CI & Keep-Alive
 - [ ] Component tests with Testing Library.
