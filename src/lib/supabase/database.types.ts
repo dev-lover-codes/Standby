@@ -9,7 +9,7 @@ export type Json =
 export type EventKind = "wedding" | "birthday" | "community" | "other";
 export type VendorStatus = "to_call" | "quoted" | "booked" | "confirmed";
 
-export interface Database {
+export type Database = {
   public: {
     Tables: {
       events: {
@@ -52,6 +52,7 @@ export interface Database {
           plan?: Json | null;
           created_at?: string;
         };
+        Relationships: [];
       };
       risks: {
         Row: {
@@ -81,6 +82,15 @@ export interface Database {
           impact?: number;
           plan_b?: string;
         };
+        Relationships: [
+          {
+            foreignKeyName: "risks_event_id_fkey";
+            columns: ["event_id"];
+            isOneToOne: false;
+            referencedRelation: "events";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       tasks: {
         Row: {
@@ -113,6 +123,15 @@ export interface Database {
           due_date?: string | null;
           done?: boolean;
         };
+        Relationships: [
+          {
+            foreignKeyName: "tasks_event_id_fkey";
+            columns: ["event_id"];
+            isOneToOne: false;
+            referencedRelation: "events";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       vendors: {
         Row: {
@@ -145,6 +164,15 @@ export interface Database {
           quote?: number | null;
           deadline?: string | null;
         };
+        Relationships: [
+          {
+            foreignKeyName: "vendors_event_id_fkey";
+            columns: ["event_id"];
+            isOneToOne: false;
+            referencedRelation: "events";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       budget_items: {
         Row: {
@@ -177,6 +205,15 @@ export interface Database {
           max_cost?: number;
           scales_with_guests?: boolean;
         };
+        Relationships: [
+          {
+            foreignKeyName: "budget_items_event_id_fkey";
+            columns: ["event_id"];
+            isOneToOne: false;
+            referencedRelation: "events";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       share_links: {
         Row: {
@@ -197,6 +234,15 @@ export interface Database {
           owner_id?: string;
           expires_at?: string;
         };
+        Relationships: [
+          {
+            foreignKeyName: "share_links_event_id_fkey";
+            columns: ["event_id"];
+            isOneToOne: false;
+            referencedRelation: "events";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       ai_usage: {
         Row: {
@@ -214,7 +260,11 @@ export interface Database {
           day?: string;
           count?: number;
         };
+        Relationships: [];
       };
+    };
+    Views: {
+      [_ in never]: never;
     };
     Functions: {
       ping: {
@@ -230,5 +280,12 @@ export interface Database {
         Returns: Json | null;
       };
     };
+    Enums: {
+      event_kind: EventKind;
+      vendor_status: VendorStatus;
+    };
+    CompositeTypes: {
+      [_ in never]: never;
+    };
   };
-}
+};
